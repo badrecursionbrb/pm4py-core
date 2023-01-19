@@ -36,8 +36,8 @@ class FallThroughFactory:
 
     @classmethod
     def get_fall_throughs(cls, obj: T, inst: IMInstance, parameters: Optional[Dict[str, Any]] = None) -> List[S]:
-        if inst is IMInstance.IM or inst is IMInstance.IMf:
-            if type(obj) is IMDataStructureUVCL:
+        if inst is IMInstance.IM or inst is IMInstance.IMf or inst is IMInstance.IMcustom:
+            if isinstance(obj, IMDataStructureUVCL):
                 return [EmptyTracesUVCL, ActivityOncePerTraceUVCL, ActivityConcurrentUVCL, StrictTauLoopUVCL,
                         TauLoopUVCL, FlowerModelUVCL]
         if inst is IMInstance.IMd:

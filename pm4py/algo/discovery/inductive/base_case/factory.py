@@ -32,8 +32,8 @@ class BaseCaseFactory:
 
     @classmethod
     def get_base_cases(cls, obj: T, inst: IMInstance, parameters: Optional[Dict[str, Any]] = None) -> List[S]:
-        if inst is IMInstance.IM or inst is IMInstance.IMf:
-            if type(obj) is IMDataStructureUVCL:
+        if inst is IMInstance.IM or inst is IMInstance.IMf or inst is IMInstance.IMcustom:
+            if isinstance(obj, IMDataStructureUVCL):
                 return [EmptyLogBaseCaseUVCL, SingleActivityBaseCaseUVCL]
         if inst is IMInstance.IMd:
             if type(obj) is IMDataStructureDFG:

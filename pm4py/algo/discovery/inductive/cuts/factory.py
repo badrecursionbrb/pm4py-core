@@ -33,8 +33,8 @@ class CutFactory:
 
     @classmethod
     def get_cuts(cls, obj: T, inst: IMInstance, parameters: Optional[Dict[str, Any]] = None) -> List[S]:
-        if inst is IMInstance.IM or inst is IMInstance.IMf:
-            if type(obj) is IMDataStructureUVCL:
+        if inst is IMInstance.IM or inst is IMInstance.IMf or IMInstance.IMcustom:
+            if isinstance(obj, IMDataStructureUVCL):
                 return [ExclusiveChoiceCutUVCL, StrictSequenceCutUVCL, ConcurrencyCutUVCL, LoopCutUVCL]
         if inst is IMInstance.IMd:
             if type(obj) is IMDataStructureDFG:
