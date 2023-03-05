@@ -6,7 +6,7 @@ from collections.abc import Iterable
 from pm4py.objects.dfg.obj import DFG, DirectlyFollowsGraph
 from pm4py.algo.discovery.inductive.dtypes.im_ds import IMDataStructureUVCL
 
-from constants import signs_ls_im_custom, OperatorType
+from pm4py.algo.discovery.inductive.visualization.constants import OperatorType, signs_ls_im_custom
 
 T = TypeVar('T', bound=list[DFG])
 V = TypeVar('V', bound=list[IMDataStructureUVCL])

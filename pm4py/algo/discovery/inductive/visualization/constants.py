@@ -17,6 +17,8 @@ class OperatorType(Enum):
     BC="BC"
     
     TAU_SYMBOL = "TAU"
+    
+    FILTER="FILTER"
 
     def __str__(self):
         return self.value

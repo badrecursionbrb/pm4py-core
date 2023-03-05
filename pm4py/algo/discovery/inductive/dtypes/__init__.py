@@ -14,4 +14,4 @@
     You should have received a copy of the GNU General Public License
     along with PM4Py.  If not, see <https://www.gnu.org/licenses/>.
 '''
-from pm4py.algo.discovery.inductive.dtypes import im_ds, im_dfg
+from pm4py.algo.discovery.inductive.dtypes import im_ds, im_dfg, im_ds_custom

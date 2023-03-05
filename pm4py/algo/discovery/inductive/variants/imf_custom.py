@@ -8,6 +8,8 @@ from pm4py.algo.discovery.inductive.dtypes.im_ds_custom import IMDataStructureCu
 from pm4py.algo.discovery.inductive.fall_through.empty_traces import EmptyTracesUVCL
 from pm4py.algo.discovery.inductive.variants.abc import InductiveMinerFramework
 from pm4py.algo.discovery.inductive.variants.instances import IMInstance
+from pm4py.algo.discovery.inductive.visualization.process_tree_node import ProcessTreeNode
+from pm4py.algo.discovery.inductive.visualization.constants import OperatorType
 from pm4py.objects.process_tree.obj import ProcessTree
 from pm4py.objects.dfg.obj import DFG
 from copy import copy
@@ -15,7 +17,7 @@ from enum import Enum
 from pm4py.util import exec_utils
 
 from pm4py.algo.discovery.inductive.variants.instances import IMInstance
-from pm4py.algo.discovery.inductive.visualization.process_tree_node import ProcessTreeNode 
+
 
 T = TypeVar('T', bound=IMDataStructureLog)
 
@@ -31,31 +33,46 @@ class IMF_Custom(Generic[T], InductiveMinerFramework[T]):
 
 
 class IMFUVCL_Custom(IMF_Custom[IMDataStructureCustom]):
-    def apply(self, obj: IMDataStructureCustom, parameters: Optional[Dict[str, Any]] = None, second_iteration: bool = False) -> ProcessTree:
+    def apply(self, obj: IMDataStructureCustom, parameters: Optional[Dict[str, Any]] = None, 
+            second_iteration: bool = False, parent=None) -> ProcessTree:
         noise_threshold = exec_utils.get_param_value(IMFParameters.NOISE_THRESHOLD, parameters, 0.0)
 
         empty_traces = EmptyTracesUVCL.apply(obj, parameters)
+        
+        if obj.dfg != None:
+            parameters["old_dfg"] = obj.dfg
+        else: 
+            parameters["old_dfg"] = None
+        
         if empty_traces is not None:
             number_original_traces = sum(y for y in obj.data_structure.values())
             number_filtered_traces = sum(y for y in empty_traces[1][1].data_structure.values())
 
             if number_original_traces - number_filtered_traces > noise_threshold * number_original_traces:
-                return self._recurse(empty_traces[0], empty_traces[1], parameters)
+                return self._recurse(empty_traces[0], empty_traces[1], parameters, operation_type=OperatorType.CUT)
             else:
+                # TODO check this case 
                 obj = empty_traces[1][1]
 
         tree = self.apply_base_cases(obj, parameters)
         if tree is None:
             cut = self.find_cut(obj, parameters)
             if cut is not None:
-                tree = self._recurse(cut[0], cut[1], parameters=parameters)
+                tree = self._recurse(cut[0], cut[1], parameters=parameters, operation_type=OperatorType.CUT)
             if tree is None:
                 if not second_iteration:
                     filtered_ds = self.__filter_dfg_noise(obj, noise_threshold)
-                    tree = self.apply(filtered_ds, parameters=parameters, second_iteration=True)
+                    filtered_ds.pt_node = ProcessTreeNode(value="FILTER", dfg=filtered_ds.dfg, parent=parent, 
+                                    children_obj_ls=filtered_ds, operation_type=OperatorType.FILTER)
+                    tree = self.apply(filtered_ds, parameters=parameters, second_iteration=True, parent=filtered_ds.pt_node)
                     if tree is None:
+                        #TODO check if this should be excluded in second iteration
                         ft = self.fall_through(obj, parameters)
-                        tree = self._recurse(ft[0], ft[1], parameters=parameters)
+                        tree = self._recurse(ft[0], ft[1], parameters=parameters, operation_type=OperatorType.FT)
+        else:
+            # TODO check with __repr__
+            tree.pt_node = ProcessTreeNode(value=tree.label, dfg=parameters.get("old_dfg"), parent=parent, children_obj_ls=[obj],
+                                        is_base_case=True, operation_type=OperatorType.BC)
         return tree
     
     def _recurse(self, tree: ProcessTree, objs: List[T], parent, parameters: Optional[Dict[str, Any]] = None, operation_type:str=None):

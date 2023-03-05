@@ -10,8 +10,8 @@ from pm4py.algo.discovery.inductive.variants.abc import InductiveMinerFramework
 from pm4py.algo.discovery.inductive.variants.instances import IMInstance
 from pm4py.objects.process_tree.obj import ProcessTree
 
-from process_tree_node import ProcessTreeNode
-from constants import OperatorType
+from pm4py.algo.discovery.inductive.visualization.process_tree_node import ProcessTreeNode
+from pm4py.algo.discovery.inductive.visualization.constants import OperatorType
 
 T = TypeVar('T', bound=IMDataStructureCustom)
 
