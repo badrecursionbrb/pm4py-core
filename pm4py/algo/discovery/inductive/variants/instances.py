@@ -24,3 +24,4 @@ class IMInstance(Enum):
     IMa = auto()
     IMi = auto()
     IMcustom = auto()
+    IMf_custom = auto()
