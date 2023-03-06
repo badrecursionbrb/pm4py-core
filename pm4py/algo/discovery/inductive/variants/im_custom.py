@@ -35,7 +35,7 @@ class IM_Custom(Generic[T], InductiveMinerFramework[T]):
         if not tree is None:
             # TODO check with __repr__
             tree.pt_node = ProcessTreeNode(value=tree.label, dfg=parameters.get("old_dfg"), parent=parent, children_obj_ls=[obj],
-                                        is_base_case=True, operation_type=OperatorType.BC)
+                                        is_base_case=True, operation_type=OperatorType.BC, log=parameters.get("log"))
         if tree is None:
             cut = self.find_cut(obj, parameters)
             if cut is not None:
@@ -47,7 +47,7 @@ class IM_Custom(Generic[T], InductiveMinerFramework[T]):
 
     def _recurse(self, tree: ProcessTree, objs: List[T], parent, parameters: Optional[Dict[str, Any]] = None, operation_type:str=None):
         tree.pt_node = ProcessTreeNode(value=tree.operator.value, dfg=parameters.get("old_dfg"), parent=parent, 
-                                    children_obj_ls=objs, operation_type=operation_type)
+                                    children_obj_ls=objs, operation_type=operation_type, log=parameters.get("log"))
         children = []
         for obj in objs:
             children.append(self.apply(obj, parameters=parameters, parent=tree.pt_node))
@@ -66,6 +66,11 @@ class IMUVCL_Custom(IM_Custom[IMDataStructureCustom]):
             parameters["old_dfg"] = obj.dfg
         else: 
             parameters["old_dfg"] = None
+            
+        if obj.dfg != None:
+            parameters["log"] = obj.data_structure
+        else: 
+            parameters["log"] = None
         
         if empty_traces is not None:
             # TODO check those two cases 

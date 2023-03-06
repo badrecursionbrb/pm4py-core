@@ -17,7 +17,7 @@ class ProcessTreeNode(Generic[V]):
     node_id_counter = 0
     
     def __init__(self, value: str, dfg: DFG, parent, children_obj_ls: V, is_base_case: bool = False,
-                operation_type:str=None) -> None:
+                operation_type:str=None, log: Counter=None) -> None:
         self.node_id = ProcessTreeNode.node_id_counter
         ProcessTreeNode.tree_nodes_ls.append(self)
         ProcessTreeNode.node_id_counter += 1
@@ -28,6 +28,8 @@ class ProcessTreeNode(Generic[V]):
         
         self.dfg = dfg
         self.dfg_groups = {}
+        
+        self.log = log
         
         self.is_base_case = is_base_case
         self.parent = parent
