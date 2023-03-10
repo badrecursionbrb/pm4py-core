@@ -74,17 +74,16 @@ class ProcessTreeNode(Generic[V]):
         # print(str(self.pt_str_json).replace("()", "").replace("'", "")) 
         
     def _traverse_tree_json(self, pt_node) -> str:
-        pre_s = '{{ "value": "{}"'.format(pt_node.value)
-        s = ""
+        traverse_pt_dict = {"value": pt_node.value}
+        children_ls = []
         if len(pt_node.children) > 0 or len(pt_node.children_not_calculated) > 0: 
-            s += ', "children": ['
             for child in pt_node.children:
-                s += self._traverse_tree_json(child) + ", "
+                children_ls.append(self._traverse_tree_json(child))
             for child in pt_node.children_not_calculated:
-                s += str(child).replace("{", "[").replace("}", "]") + ", " #+ "%"
-            s = s[:-2]
-            s += " ] "
-        return pre_s + s + "}"
+                children_ls.append(str(child).replace("{", "[").replace("}", "]"))
+        
+        traverse_pt_dict["children"] = children_ls
+        return traverse_pt_dict
     
     def __get_root_node(self):
         if self.parent == None:
