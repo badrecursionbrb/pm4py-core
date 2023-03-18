@@ -22,7 +22,8 @@ class IM_Custom(Generic[T], InductiveMinerFramework[T]):
         return IMInstance.IMcustom
     
     def apply(self, obj: T, parameters: Optional[Dict[str, Any]] = None, parent=None) -> ProcessTree:
-        """_summary_: This method overwrites the IM Framework superclass!
+        """_summary_: This method overwrites the IM Framework superclass! 
+
 
         Args:
             obj (T): _description_
@@ -57,7 +58,30 @@ class IM_Custom(Generic[T], InductiveMinerFramework[T]):
         return tree
 
 class IMUVCL_Custom(IM_Custom[IMDataStructureCustom]):
+    """_summary_: 
+        Custom implementation of the UVCL version of the  Inductive Miner infrequent 
+        At each step the corresponding ProcessTreeNode object storing all data for the step, is 
+        added to the node list
+
+        Args:
+            IM_Custom intherits the class IM_Custom as this is a specialization for UVCL Logs
+
+        """    
+    
     def apply(self, obj: IMDataStructureCustom, parameters: Optional[Dict[str, Any]] = None, parent=None) -> ProcessTree:
+        """ Application of the IM Framework algorithm, extended by saving the step data as 
+            ProcessTreeNode to the ProcessTreeNode class list. 
+
+        Args:
+            obj (IMDataStructureCustom): gets an IMDataStructureCustomm 
+            parameters (Optional[Dict[str, Any]], optional): Dictionary of parameters.
+                    Is also used to store the dfg in it. Defaults to None.
+            parent (_type_, optional): The parent ProcessTreeNode to connect the current node with 
+                                        the previous steps / rest of the tree. Defaults to None.
+
+        Returns:
+            ProcessTree: Returns a ProcessTree after running the IM algorithm
+        """
         empty_traces = EmptyTracesUVCL.apply(obj, parameters)
         
         # saving the current dfg in the parameters to save it later in recurse or apply to the 

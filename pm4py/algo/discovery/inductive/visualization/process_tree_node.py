@@ -1,6 +1,6 @@
 
 from collections import Counter
-from typing import TypeVar, List, Generic
+from typing import TypeVar, List, Generic, Dict
 from collections.abc import Iterable
 
 from pm4py.objects.dfg.obj import DFG, DirectlyFollowsGraph
@@ -13,11 +13,31 @@ V = TypeVar('V', bound=list[IMDataStructureUVCL])
 
 
 class ProcessTreeNode(Generic[V]):
+    """ The ProcessTreeNode represents all the data that should be available for visualisation of 
+        a certain step during running the inductive miner. 
+    
+    Attributes: 
+        tree_nodes_ls       Contains all ProcessTreeNode objects created during running of the
+                            algorithm
+        node_id_counter     Counting up for each node added to the list, to give a unique id to 
+                            each node 
+    """
     tree_nodes_ls = []
     node_id_counter = 0
     
     def __init__(self, value: str, dfg: DFG, parent, children_obj_ls: V, is_base_case: bool = False,
-                operation_type:str=None, log: Counter=None) -> None:
+                operation_type:OperatorType=None, log: Counter=None) -> None:
+        """ Initializes the ProcessTreeNode object
+
+        Args:
+            value (str): The value of the node i.e. the action performed during the step
+            dfg (DFG): The dfg present at the current node 
+            parent (ProcessTreeNode): The parent of the object, also is a ProcessTreeNode
+            children_obj_ls (V): The children of the node 
+            is_base_case (bool, optional): _description_. Defaults to False.
+            operation_type (OperatorType, optional): _description_. Defaults to None.
+            log (Counter, optional): _description_. Defaults to None.
+        """
         self.node_id = ProcessTreeNode.node_id_counter
         ProcessTreeNode.tree_nodes_ls.append(self)
         ProcessTreeNode.node_id_counter += 1
@@ -73,7 +93,17 @@ class ProcessTreeNode(Generic[V]):
         self.pt_str_json = self._traverse_tree_json(self.__get_root_node())
         # print(str(self.pt_str_json).replace("()", "").replace("'", "")) 
         
-    def _traverse_tree_json(self, pt_node) -> str:
+    def _traverse_tree_json(self, pt_node) -> Dict:
+        """ Traverses the tree and packs this tree into a dict structure, also traverses children 
+            not calculated by the algorithm yet 
+
+        Args:
+            pt_node (ProcessTreeNode): gets the parent node as an argument
+
+        Returns:
+            Dict: Dict containing the information about the process tree including the children of 
+                    the tree that have not been calculated 
+        """
         traverse_pt_dict = {"value": pt_node.value}
         children_ls = []
         if len(pt_node.children) > 0 or len(pt_node.children_not_calculated) > 0: 
@@ -91,16 +121,16 @@ class ProcessTreeNode(Generic[V]):
         else:
             return self.parent.__get_root_node()
         
-    def _determine_im_case(self, value, operator_type: str) -> str:
+    def _determine_im_case(self, value: str, operator_type: OperatorType) -> str:
         """ with this function a mapping from the pm4py operators to the desired operators for displaying 
             the explanation 
 
         Args:
-            value (_type_): _description_
-            operator_type (str): _description_
+            value (str): A string that represents the value of a certain node as string 
+            operator_type (OperatorType): Enum value of the OperatorType enum 
 
         Returns:
-            str: _description_
+            str: operator type as a string represenation
         """
         if value in signs_ls_im_custom or operator_type == OperatorType.CUT:
             return OperatorType.CUT.value

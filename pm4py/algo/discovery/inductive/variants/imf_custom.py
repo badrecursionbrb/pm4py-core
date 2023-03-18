@@ -33,10 +33,30 @@ class IMF_Custom(Generic[T], InductiveMinerFramework[T]):
 
 
 class IMFUVCL_Custom(IMF_Custom[IMDataStructureCustom]):
+    """ Custom implementation of the UVCL version of the  Inductive Miner infrequent 
+        At each step the corresponding ProcessTreeNode object storing all data for the step, is 
+        added to the node list
+     
+
+    Args:
+        IMF_Custom (_type_): Gets the data structure as an argument
+    """
     def apply(self, obj: IMDataStructureCustom, parameters: Optional[Dict[str, Any]] = None, 
             second_iteration: bool = False, parent=None) -> ProcessTree:
         noise_threshold = exec_utils.get_param_value(IMFParameters.NOISE_THRESHOLD, parameters, 0.0)
+        """  Application of the IM Framework algorithm, extended by saving the step data as 
+            ProcessTreeNode to the ProcessTreeNode class list. 
 
+        Args:
+            obj (IMDataStructureCustom): gets an IMDataStructureCustom
+            parameters (Optional[Dict[str, Any]], optional): Dictionary of parameters.
+                    Is also used to store the dfg in it. Defaults to None.
+            parent (ProcessTreeNode, optional): The parent ProcessTreeNode to connect the current
+                                node with the previous steps / rest of the tree. Defaults to None.
+
+        Returns:
+            ProcessTree: Returns a ProcessTree after running the IM algorithm
+        """
         empty_traces = EmptyTracesUVCL.apply(obj, parameters)
         
         if obj.dfg != None:

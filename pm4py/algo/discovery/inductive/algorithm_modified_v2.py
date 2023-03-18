@@ -40,8 +40,6 @@ from pm4py.util.compression.dtypes import UVCL
 import warnings
 
 
-
-
 class Parameters(Enum):
     ACTIVITY_KEY = constants.PARAMETER_CONSTANT_ACTIVITY_KEY
     TIMESTAMP_KEY = constants.PARAMETER_CONSTANT_TIMESTAMP_KEY
@@ -49,6 +47,9 @@ class Parameters(Enum):
 
 
 class Variants(Enum):
+    """ This Enum needs to be extended for each IM variant that shall be displayed in the 
+            front-end
+    """
     IM = IMInstance.IM
     IMf = IMInstance.IMf
     IMd = IMInstance.IMd
@@ -56,6 +57,24 @@ class Variants(Enum):
     IMf_custom = IMInstance.IMf_custom
 
 def apply(obj: Union[EventLog, pd.DataFrame, DFG, UVCL], parameters: Optional[Dict[Any, Any]] = None, variant=Variants.IMcustom) -> ProcessTree:
+    """ This method overwrites the corresponding apply method in the 
+
+    Args:
+        obj (Union[EventLog, pd.DataFrame, DFG, UVCL]): The Event Log
+        parameters (Optional[Dict[Any, Any]], optional): additional parameters such as threshold.
+                                                        Defaults to None.
+        variant (_type_, optional): Gives the Variant of the Inductive Miner, see the Variants 
+                        Enum above. Defaults to Variants.IMcustom.
+
+    Raises:
+        TypeError: If the type of the obj is not in the List of allowed  data types this method 
+                    raises a TypeError
+
+    Returns:
+        ProcessTree: Returns a ProcessTree object containing also the information for each step 
+                    via the pt_node attribute, present in each ProcessTree object 
+    """
+    
     if parameters is None:
         parameters = {}
     if type(obj) not in [EventLog, pd.DataFrame, DFG, UVCL]:
