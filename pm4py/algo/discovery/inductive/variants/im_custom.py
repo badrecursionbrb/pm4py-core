@@ -21,7 +21,8 @@ class IM_Custom(Generic[T], InductiveMinerFramework[T]):
     def instance(self) -> IMInstance:
         return IMInstance.IMcustom
     
-    def apply(self, obj: T, parameters: Optional[Dict[str, Any]] = None, parent=None) -> ProcessTree:
+    def apply(self, obj: T, parameters: Optional[Dict[str, Any]] = None,
+                parent: ProcessTreeNode=None) -> ProcessTree:
         """_summary_: This method overwrites the IM Framework superclass! 
 
 
@@ -46,7 +47,7 @@ class IM_Custom(Generic[T], InductiveMinerFramework[T]):
             tree = self._recurse(ft[0], ft[1], parameters=parameters, parent=parent, operation_type=OperatorType.FT)
         return tree
 
-    def _recurse(self, tree: ProcessTree, objs: List[T], parent, parameters: Optional[Dict[str, Any]] = None, operation_type:str=None):
+    def _recurse(self, tree: ProcessTree, objs: List[T], parent: ProcessTreeNode, parameters: Optional[Dict[str, Any]] = None, operation_type:str=None):
         tree.pt_node = ProcessTreeNode(value=tree.operator.value, dfg=parameters.get("old_dfg"), parent=parent, 
                                     children_obj_ls=objs, operation_type=operation_type, log=parameters.get("log"))
         children = []
@@ -68,7 +69,8 @@ class IMUVCL_Custom(IM_Custom[IMDataStructureCustom]):
 
         """    
     
-    def apply(self, obj: IMDataStructureCustom, parameters: Optional[Dict[str, Any]] = None, parent=None) -> ProcessTree:
+    def apply(self, obj: IMDataStructureCustom, parameters: Optional[Dict[str, Any]] = None,
+                parent: ProcessTreeNode=None) -> ProcessTree:
         """ Application of the IM Framework algorithm, extended by saving the step data as 
             ProcessTreeNode to the ProcessTreeNode class list. 
 

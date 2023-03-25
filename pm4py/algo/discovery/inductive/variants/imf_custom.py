@@ -42,7 +42,7 @@ class IMFUVCL_Custom(IMF_Custom[IMDataStructureCustom]):
         IMF_Custom (_type_): Gets the data structure as an argument
     """
     def apply(self, obj: IMDataStructureCustom, parameters: Optional[Dict[str, Any]] = None, 
-            second_iteration: bool = False, parent=None) -> ProcessTree:
+            second_iteration: bool = False, parent: ProcessTreeNode=None) -> ProcessTree:
         noise_threshold = exec_utils.get_param_value(IMFParameters.NOISE_THRESHOLD, parameters, 0.0)
         """  Application of the IM Framework algorithm, extended by saving the step data as 
             ProcessTreeNode to the ProcessTreeNode class list. 
@@ -95,7 +95,8 @@ class IMFUVCL_Custom(IMF_Custom[IMDataStructureCustom]):
                                         is_base_case=True, operation_type=OperatorType.BC)
         return tree
     
-    def _recurse(self, tree: ProcessTree, objs: List[T], parent, parameters: Optional[Dict[str, Any]] = None, operation_type:str=None):
+    def _recurse(self, tree: ProcessTree, objs: List[T], parent: ProcessTreeNode,
+                    parameters: Optional[Dict[str, Any]] = None, operation_type:str=None):
         tree.pt_node = ProcessTreeNode(value=tree.operator.value, dfg=parameters.get("old_dfg"), parent=parent, 
                                     children_obj_ls=objs, operation_type=operation_type)
         children = []
