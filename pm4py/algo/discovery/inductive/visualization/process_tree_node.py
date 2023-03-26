@@ -43,7 +43,7 @@ class ProcessTreeNode(Generic[V]):
         ProcessTreeNode.node_id_counter += 1
         self.case_type = self._determine_im_case(value, operation_type)
         self.value = value
-        if self.case_type == OperatorType.TAU_SYMBOL:
+        if self.case_type == OperatorType.TAU_SYMBOL.value:
             self.value = "tau"
         
         self.dfg = dfg
