@@ -22,10 +22,8 @@ class ProcessTreeNode(Generic[V]):
         node_id_counter     Counting up for each node added to the list, to give a unique id to 
                             each node 
     """
-    tree_nodes_ls = []
-    node_id_counter = 0
     
-    def __init__(self, value: str, dfg: DFG, parent, children_obj_ls: V, is_base_case: bool = False,
+    def __init__(self, value: str, dfg: DFG, parent, children_obj_ls: V, node_id: int, is_base_case: bool = False,
                 operation_type:OperatorType=None, log: Counter=None) -> None:
         """ Initializes the ProcessTreeNode object
 
@@ -34,13 +32,12 @@ class ProcessTreeNode(Generic[V]):
             dfg (DFG): The dfg present at the current node 
             parent (ProcessTreeNode): The parent of the object, also is a ProcessTreeNode
             children_obj_ls (V): The children of the node 
+            node_id (int): the corresponding node id of the process tree node list 
             is_base_case (bool, optional): _description_. Defaults to False.
             operation_type (OperatorType, optional): _description_. Defaults to None.
             log (Counter, optional): _description_. Defaults to None.
         """
-        self.node_id = ProcessTreeNode.node_id_counter
-        ProcessTreeNode.tree_nodes_ls.append(self)
-        ProcessTreeNode.node_id_counter += 1
+        self.node_id = node_id
         self.case_type = self._determine_im_case(value, operation_type)
         self.value = value
         if self.case_type == OperatorType.TAU_SYMBOL.value:
@@ -67,7 +64,6 @@ class ProcessTreeNode(Generic[V]):
         # children is done
         self.children = []        
         self.children_not_calculated = []
-        
         
         for index_counter in range(len(children_obj_ls)):
             obj = children_obj_ls[index_counter]

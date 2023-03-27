@@ -82,8 +82,11 @@ class IMFUVCL_Custom(IMF_Custom[IMDataStructureCustom]):
             if tree is None:
                 if not second_iteration:
                     filtered_ds = self.__filter_dfg_noise(obj, noise_threshold)
+                    
                     filtered_ds.pt_node = ProcessTreeNode(value="FILTER", dfg=filtered_ds.dfg, parent=parent, 
-                                    children_obj_ls=filtered_ds, operation_type=OperatorType.FILTER)
+                                    children_obj_ls=filtered_ds, node_id=self.node_id_counter, operation_type=OperatorType.FILTER)
+                    self.append_node_and_raise(pt_node=tree.pt_node)
+                    
                     tree = self.apply(filtered_ds, parameters=parameters, second_iteration=True, parent=filtered_ds.pt_node)
                     if tree is None:
                         #TODO check if this should be excluded in second iteration
@@ -93,12 +96,16 @@ class IMFUVCL_Custom(IMF_Custom[IMDataStructureCustom]):
             # TODO check with __repr__
             tree.pt_node = ProcessTreeNode(value=tree.label, dfg=parameters.get("old_dfg"), parent=parent, children_obj_ls=[obj],
                                         is_base_case=True, operation_type=OperatorType.BC)
+            self.append_node_and_raise(pt_node=tree.pt_node)
+            
         return tree
     
     def _recurse(self, tree: ProcessTree, objs: List[T], parent: ProcessTreeNode,
                     parameters: Optional[Dict[str, Any]] = None, operation_type:str=None):
         tree.pt_node = ProcessTreeNode(value=tree.operator.value, dfg=parameters.get("old_dfg"), parent=parent, 
                                     children_obj_ls=objs, operation_type=operation_type)
+        self.append_node_and_raise(pt_node=tree.pt_node)
+        
         children = []
         for obj in objs:
             children.append(self.apply(obj, parameters=parameters, parent=tree.pt_node))

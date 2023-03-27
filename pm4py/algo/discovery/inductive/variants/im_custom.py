@@ -17,15 +17,13 @@ T = TypeVar('T', bound=IMDataStructureCustom)
 
 
 class IM_Custom(Generic[T], InductiveMinerFramework[T]):
-
+    
     def instance(self) -> IMInstance:
         return IMInstance.IMcustom
     
     def apply(self, obj: T, parameters: Optional[Dict[str, Any]] = None,
                 parent: ProcessTreeNode=None) -> ProcessTree:
         """_summary_: This method overwrites the IM Framework superclass! 
-
-
         Args:
             obj (T): _description_
             parameters (Optional[Dict[str, Any]], optional): _description_. Defaults to None.
@@ -37,7 +35,9 @@ class IM_Custom(Generic[T], InductiveMinerFramework[T]):
         if not tree is None:
             # TODO check with __repr__
             tree.pt_node = ProcessTreeNode(value=tree.label, dfg=parameters.get("old_dfg"), parent=parent, children_obj_ls=[obj],
-                                        is_base_case=True, operation_type=OperatorType.BC, log=parameters.get("log"))
+                            node_id=self.node_id_counter, is_base_case=True, operation_type=OperatorType.BC, log=parameters.get("log"))
+            self.append_node_and_raise(pt_node=tree.pt_node)
+            
         if tree is None:
             cut = self.find_cut(obj, parameters)
             if cut is not None:
@@ -49,7 +49,9 @@ class IM_Custom(Generic[T], InductiveMinerFramework[T]):
 
     def _recurse(self, tree: ProcessTree, objs: List[T], parent: ProcessTreeNode, parameters: Optional[Dict[str, Any]] = None, operation_type:str=None):
         tree.pt_node = ProcessTreeNode(value=tree.operator.value, dfg=parameters.get("old_dfg"), parent=parent, 
-                                    children_obj_ls=objs, operation_type=operation_type, log=parameters.get("log"))
+                                    children_obj_ls=objs, node_id=self.node_id_counter, operation_type=operation_type, log=parameters.get("log"))
+        self.append_node_and_raise(pt_node=tree.pt_node)
+        
         children = []
         for obj in objs:
             children.append(self.apply(obj, parameters=parameters, parent=tree.pt_node))

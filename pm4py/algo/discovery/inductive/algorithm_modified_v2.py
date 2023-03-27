@@ -15,11 +15,12 @@
     along with PM4Py.  If not, see <https://www.gnu.org/licenses/>.
 '''
 from enum import Enum
-from typing import Optional, Dict, Any, Union
+from typing import Optional, Dict, Any, Union, List
 
 import pandas as pd
 
 from pm4py import util as pmutil
+#from pm4py.algo.discovery.inductive.variants.abc import InductiveMinerFramework
 from pm4py.algo.discovery.inductive.dtypes.im_dfg import InductiveDFG
 from pm4py.algo.discovery.inductive.dtypes.im_ds import IMDataStructureUVCL, IMDataStructureDFG
 from pm4py.algo.discovery.inductive.dtypes.im_ds_custom import IMDataStructureCustom
@@ -56,7 +57,7 @@ class Variants(Enum):
     IMcustom = IMInstance.IMcustom
     IMf_custom = IMInstance.IMf_custom
 
-def apply(obj: Union[EventLog, pd.DataFrame, DFG, UVCL], parameters: Optional[Dict[Any, Any]] = None, variant=Variants.IMcustom) -> ProcessTree:
+def apply(obj: Union[EventLog, pd.DataFrame, DFG, UVCL], parameters: Optional[Dict[Any, Any]] = None, variant=Variants.IMcustom) -> (ProcessTree, List):
     """ This method overwrites the corresponding apply method in the 
 
     Args:
@@ -90,11 +91,11 @@ def apply(obj: Union[EventLog, pd.DataFrame, DFG, UVCL], parameters: Optional[Di
         if variant is Variants.IMcustom:
             im = IMUVCL_Custom(parameters)
             dfg = comut.discover_dfg_uvcl(uvcl)
-            return im.apply(IMDataStructureCustom(uvcl, dfg), parameters)
+            return im.apply(IMDataStructureCustom(uvcl, dfg), parameters), im.tree_nodes_ls
         if variant is Variants.IMf_custom:
             im = IMFUVCL_Custom(parameters)
             dfg = comut.discover_dfg_uvcl(uvcl)
-            return im.apply(IMDataStructureCustom(uvcl, dfg), parameters)
+            return im.apply(IMDataStructureCustom(uvcl, dfg), parameters), im.tree_nodes_ls
         # if variant is Variants.IM:
         #     im = IMUVCL(parameters)
         #     return im.apply(IMDataStructureUVCL(uvcl), parameters)

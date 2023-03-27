@@ -24,6 +24,7 @@ from pm4py.algo.discovery.inductive.cuts.factory import CutFactory
 from pm4py.algo.discovery.inductive.dtypes.im_ds import IMDataStructure
 from pm4py.algo.discovery.inductive.fall_through.factory import FallThroughFactory
 from pm4py.algo.discovery.inductive.variants.instances import IMInstance
+from pm4py.algo.discovery.inductive.visualization.process_tree_node import ProcessTreeNode
 from pm4py.objects.process_tree.obj import ProcessTree
 from enum import Enum
 from pm4py.util import exec_utils, constants
@@ -59,6 +60,9 @@ class InductiveMinerFramework(ABC, Generic[T]):
         else:
             self._pool = None
             self._manager = None
+        
+        self.tree_nodes_ls = [] # this line (& the next) is custom made for the Im-viz application
+        self.node_id_counter = 0
 
     def apply_base_cases(self, obj: T, parameters: Optional[Dict[str, Any]] = None) -> Optional[ProcessTree]:
         return BaseCaseFactory.apply_base_cases(obj, self.instance(), parameters=parameters)
@@ -90,3 +94,7 @@ class InductiveMinerFramework(ABC, Generic[T]):
     @abstractmethod
     def instance(self) -> IMInstance:
         pass
+    
+    def append_node_and_raise(self, pt_node: ProcessTreeNode):
+        self.tree_nodes_ls.append(pt_node)
+        self.node_id_counter += 1 
