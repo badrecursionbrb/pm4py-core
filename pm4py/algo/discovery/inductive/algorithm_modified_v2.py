@@ -80,9 +80,11 @@ def apply(obj: Union[EventLog, pd.DataFrame, DFG, UVCL], parameters: Optional[Di
         parameters = {}
     if type(obj) not in [EventLog, pd.DataFrame, DFG, UVCL]:
         raise TypeError('Inductive miner called with an incorrect data type as an input (should be a dataframe or DFG)')
+
     ack = exec_utils.get_param_value(Parameters.ACTIVITY_KEY, parameters, xes_util.DEFAULT_NAME_KEY)
     tk = exec_utils.get_param_value(Parameters.TIMESTAMP_KEY, parameters, xes_util.DEFAULT_TIMESTAMP_KEY)
     cidk = exec_utils.get_param_value(Parameters.CASE_ID_KEY, parameters, pmutil.constants.CASE_CONCEPT_NAME)
+    
     if type(obj) in [EventLog, pd.DataFrame, UVCL]:
         if type(obj) in [EventLog, pd.DataFrame]:
             uvcl = comut.get_variants(comut.project_univariate(obj, key=ack, df_glue=cidk, df_sorting_criterion_key=tk))

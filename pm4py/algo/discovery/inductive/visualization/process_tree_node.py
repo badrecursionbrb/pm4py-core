@@ -129,7 +129,11 @@ class ProcessTreeNode(Generic[V]):
             str: operator type as a string represenation
         """
         if value in signs_ls_im_custom or operator_type == OperatorType.CUT:
-            return OperatorType.CUT.value
+            if operator_type == OperatorType.CUT:
+                return OperatorType.CUT.value
+            else:
+                # this case is a type of fall through cut 
+                return OperatorType.FT.value
         else:
             # either base case, other or tau 
             if value == None:
