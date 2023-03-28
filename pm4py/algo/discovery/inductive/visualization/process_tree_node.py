@@ -140,5 +140,7 @@ class ProcessTreeNode(Generic[V]):
                 return OperatorType.TAU_SYMBOL.value
             elif operator_type == OperatorType.BC:
                 return OperatorType.BC.value
+            elif operator_type == OperatorType.FILTER:
+                return OperatorType.FILTER.value
             else:
                 return OperatorType.FT.value 

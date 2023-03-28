@@ -95,7 +95,7 @@ class IMFUVCL_Custom(IMF_Custom[IMDataStructureCustom]):
                     
                     tree = self.apply(filtered_ds, parameters=parameters, second_iteration=True, parent=filtered_ds.pt_node)
                     if tree is None:
-                        #TODO check if this should be excluded in second iteration
+                        # this only enters if tree is None that is the case when second iteraiton also yields nothing (line above)
                         ft = self.fall_through(obj, parameters)
                         tree = self._recurse(ft[0], ft[1], parameters=parameters, parent=parent, operation_type=OperatorType.FT)
         else:
