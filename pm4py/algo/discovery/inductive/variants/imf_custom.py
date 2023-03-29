@@ -81,7 +81,7 @@ class IMFUVCL_Custom(IMF_Custom[IMDataStructureCustom]):
                 if not second_iteration:
                     filtered_ds = self.__filter_dfg_noise(obj, noise_threshold)
                     # used obj.dfg instead of filtered_ds.dfg before to see what happens before vs after filtering
-                    obj.pt_node = ProcessTreeNode(value="FILTER", dfg=obj.dfg, parent=parent, 
+                    obj.pt_node = ProcessTreeNode(value="PREFILTER", dfg=obj.dfg, parent=parent, 
                                     children_obj_ls=[filtered_ds], node_id=self.node_id_counter,
                                     operation_type=OperatorType.FILTER, log=parameters.get("log"))
                     self.append_node_and_raise(pt_node=obj.pt_node)
