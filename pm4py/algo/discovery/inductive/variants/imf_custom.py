@@ -59,15 +59,7 @@ class IMFUVCL_Custom(IMF_Custom[IMDataStructureCustom]):
         """
         empty_traces = EmptyTracesUVCL.apply(obj, parameters)
         
-        if obj.dfg != None:
-            parameters["old_dfg"] = obj.dfg
-        else: 
-            parameters["old_dfg"] = None
-        
-        if obj.dfg != None:
-            parameters["log"] = obj.data_structure
-        else: 
-            parameters["log"] = None
+        parameters = self._parameter_assign(obj=obj, parameters=parameters)
         
         if empty_traces is not None:
             number_original_traces = sum(y for y in obj.data_structure.values())
@@ -78,6 +70,7 @@ class IMFUVCL_Custom(IMF_Custom[IMDataStructureCustom]):
             else:
                 # TODO check this case 
                 obj = empty_traces[1][1]
+                parameters = self._parameter_assign(obj=obj, parameters=parameters)
 
         tree = self.apply_base_cases(obj, parameters)
         if tree is None:
@@ -87,10 +80,16 @@ class IMFUVCL_Custom(IMF_Custom[IMDataStructureCustom]):
             if tree is None:
                 if not second_iteration:
                     filtered_ds = self.__filter_dfg_noise(obj, noise_threshold)
-                    
-                    filtered_ds.pt_node = ProcessTreeNode(value="FILTER", dfg=filtered_ds.dfg, parent=parent, 
+                    # used obj.dfg instead of filtered_ds.dfg before to see what happens before vs after filtering
+                    obj.pt_node = ProcessTreeNode(value="FILTER", dfg=obj.dfg, parent=parent, 
                                     children_obj_ls=[filtered_ds], node_id=self.node_id_counter,
                                     operation_type=OperatorType.FILTER, log=parameters.get("log"))
+                    self.append_node_and_raise(pt_node=obj.pt_node)
+                    # Filtering afterwards, to observe the difference in the dfg in the front-end
+                    # TODO the data_structure does not reflect (signal) the filtering step, display of traces in table not meaningful then
+                    filtered_ds.pt_node = ProcessTreeNode(value="FILTER", dfg=filtered_ds.dfg, parent=obj.pt_node, 
+                                    children_obj_ls=[obj], node_id=self.node_id_counter,
+                                    operation_type=OperatorType.FILTER, log=filtered_ds.data_structure)
                     self.append_node_and_raise(pt_node=filtered_ds.pt_node)
                     
                     tree = self.apply(filtered_ds, parameters=parameters, second_iteration=True, parent=filtered_ds.pt_node)

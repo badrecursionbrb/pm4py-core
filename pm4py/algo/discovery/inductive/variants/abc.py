@@ -98,3 +98,12 @@ class InductiveMinerFramework(ABC, Generic[T]):
     def append_node_and_raise(self, pt_node: ProcessTreeNode):
         self.tree_nodes_ls.append(pt_node)
         self.node_id_counter += 1 
+        
+    def _parameter_assign(self, obj, parameters):
+        if obj.dfg != None:
+            parameters["old_dfg"] = obj.dfg
+            parameters["log"] = obj.data_structure
+        else: 
+            parameters["old_dfg"] = None
+            parameters["log"] = None
+        return parameters
